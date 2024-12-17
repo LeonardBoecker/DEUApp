@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expenses</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #e0f2f7; /* Light blue background */
+            color: #2196f3; /* Blue text color */
+        }
+
+        h1 {
+            text-align: center;
+            color: #1976d2; /* Darker blue for title */
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="number"], input[type="time"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #90caf9; /* Lighter blue border */
+        }
+
+        button {
+            background-color: #2196f3;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #90caf9; /* Lighter blue for table headers */
+        }
+
+       
+    </style>
+</head>
+<body>
+
+    <h1>Daily Expenses</h1>
+
+    <label for="km">Km total:</label>
+    <input type="number" id="km" name="km"><br><br>
+
+    <label for="hours">Horas trabalhadas:</label>
+    <input type="time" id="hours" name="hours"><br><br>
+
+    <label for="valorBruto">Valor bruto:</label>
+    <input type="number" id="valorBruto" name="valorBruto" step="0.01"><br><br>
+
+
+    <label for="mediaKm">Media km:</label>
+    <input type="number" id="mediaKm" name="mediaKm"><br><br>
+
+    <label for="fuelPrice">Fuel price:</label>
+    <input type="number" id="fuelPrice" name="fuelPrice" step="0.01"><br><br>
+    
+    <div id="lunchesContainer">
+        <label for="lunchValue">Lunch Value:</label>
+        <input type="number" class="lunchValue" name="lunchValue[]" step="0.01">
+        <label for="lunchDesc">Lunch Description:</label>
+        <input type="text" class="lunchDesc" name="lunchDesc[]">
+    </div>
+    <button onclick="addLunch()">Add Lunch</button><br><br>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <table id="resultsTable" style="display: none;"></table>
+
+    <script>
+        function addLunch() {
+            const container = document.getElementById('lunchesContainer');
+            const newLunch = document.createElement('div');
+            newLunch.innerHTML = `
+                <label for="lunchValue">Lunch Value:</label>
+                <input type="number" class="lunchValue" name="lunchValue[]" step="0.01">
+                <label for="lunchDesc">Lunch Description:</label>
+                <input type="text" class="lunchDesc" name="lunchDesc[]">
+            `;
+            container.appendChild(newLunch);
+        }
+
+        function calculate() {
+            const km = parseFloat(document.getElementById("km").value);
+            // ... (get other values similarly) ...
+            const lunchValues = document.querySelectorAll('.lunchValue');
+            let lunches = 0;
+            lunchValues.forEach(lunchValue => {
+                lunches += parseFloat(lunchValue.value) || 0; // Handle empty or non-numeric input
+            });
+
+
+
+            const litersSpent = km / mediaKm;
+            const kmPrice = (litersSpent * fuelPrice) / km;
+            const expenses = (fuelPrice * litersSpent) + lunches;
+            const profit = valorBruto - expenses;
+
+
+             // Display results in the table
+             const resultsTable = document.getElementById("resultsTable");
+            resultsTable.innerHTML = `
+                <tr><th>Label</th><th>Value</th></tr>
+                <tr><td>Your daily profit:</td><td>${profit.toFixed(2)}</td></tr>
+                <tr><td>Your daily expenses:</td><td>${expenses.toFixed(2)}</td></tr>
+                <tr><td>Your Km daily costs:</td><td>${kmPrice.toFixed(2)}</td></tr>
+                <tr><td>Liters daily spent:</td><td>${litersSpent.toFixed(2)}</td></tr>
+            `;
+
+            resultsTable.style.display = "table";
+        }
+    </script>
+
+</body>
+</html>
